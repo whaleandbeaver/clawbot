@@ -10,8 +10,8 @@ R2 = Motor(Ports.PORT5, True)
 R3 = Motor(Ports.PORT6, True)
 IN = Motor(Ports.PORT7, GearSetting.RATIO_6_1, True)
 EL = Motor(Ports.PORT8, GearSetting.RATIO_6_1)
-SP = DigitalOut(brain.three_wire_port.a)
-CP = DigitalOut(brain.three_wire_port.b)
+SP1 = DigitalOut(brain.three_wire_port.a)
+SP2 = DigitalOut(brain.three_wire_port.b)
 
 def Control():
 
@@ -42,12 +42,14 @@ def Control():
 
         if controller.buttonA.pressing() and piston == False:
             while controller.buttonA.pressing():
-                SP.set(True)
+                SP1.set(True)
+                SP2.set(False)
                 piston = True
 
         if controller.buttonA.pressing() and piston == True:
             while controller.buttonA.pressing():
-                SP.set(False)
+                SP1.set(False)
+                SP2.set(True)
                 piston = False
 
 
