@@ -2,12 +2,12 @@ from vex import *
 
 brain=Brain()
 controller = Controller()
-R1 = Motor(Ports.PORT1, True)
-R2 = Motor(Ports.PORT2)
-R3 = Motor(Ports.PORT3)
-L1 = Motor(Ports.PORT4)
-L2 = Motor(Ports.PORT5, True)
-L3 = Motor(Ports.PORT6, True)
+R1 = Motor(Ports.PORT1)
+R2 = Motor(Ports.PORT2, True)
+R3 = Motor(Ports.PORT3, True)
+L1 = Motor(Ports.PORT4, True)
+L2 = Motor(Ports.PORT5)
+L3 = Motor(Ports.PORT6)
 IN = Motor(Ports.PORT7, True)
 EL = Motor(Ports.PORT8,)
 SP1 = DigitalOut(brain.three_wire_port.a)
@@ -16,7 +16,7 @@ SP2 = DigitalOut(brain.three_wire_port.b)
 def Control():
 
     piston = False
-    elevate = False
+    elevate = True
     while True:
 
         lft = controller.axis2.position()
@@ -35,14 +35,16 @@ def Control():
             EL.spin(REVERSE, 100)
         
         if controller.buttonR1.pressing() and elevate == False:
-            IN.stop()
-            EL.stop()
-            elevate = True
+            while controller.buttonR1.pressing():
+                IN.stop()
+                EL.stop()
+                elevate = True
 
         if controller.buttonR1.pressing() and elevate == True:
-            IN.spin(FORWARD, 100)
-            EL.spin(FORWARD, 100)
-            elevate = False
+            while controller.buttonR1.pressing():
+                IN.spin(FORWARD, 100)
+                EL.spin(FORWARD, 100)
+                elevate = False
 
         if controller.buttonA.pressing() and piston == False:
             while controller.buttonA.pressing():
