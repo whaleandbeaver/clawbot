@@ -16,10 +16,11 @@ SP2 = DigitalOut(brain.three_wire_port.b)
 def Control():
 
     piston = False
+    elevate = False
     while True:
 
-        lft = controller.axis3.position()
-        rght = controller.axis2.position()
+        lft = controller.axis2.position()
+        rght = controller.axis3.position()
 
         L1.spin(FORWARD, lft)
         L2.spin(FORWARD, lft)
@@ -28,17 +29,20 @@ def Control():
         R2.spin(FORWARD, rght)
         R3.spin(FORWARD, rght)
 
-        if controller.buttonR1.pressing():
+
+        if controller.buttonR2.pressing():
+            IN.spin(REVERSE, 100)
+            EL.spin(REVERSE, 100)
+        
+        if controller.buttonR1.pressing() and elevate == False:
+            IN.stop()
+            EL.stop()
+            elevate = True
+
+        if controller.buttonR1.pressing() and elevate == True:
             IN.spin(FORWARD, 100)
             EL.spin(FORWARD, 100)
-        else:
-
-            if controller.buttonR2.pressing():
-                IN.spin(REVERSE, 100)
-                EL.spin(REVERSE, 100)
-            else:
-                IN.stop()
-                EL.stop()
+            elevate = False
 
         if controller.buttonA.pressing() and piston == False:
             while controller.buttonA.pressing():
@@ -55,3 +59,4 @@ def Control():
 
 
 Control()
+
