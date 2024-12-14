@@ -13,7 +13,22 @@ EL = Motor(Ports.PORT8,)
 SP1 = DigitalOut(brain.three_wire_port.a)
 SP2 = DigitalOut(brain.three_wire_port.b)
 
-def Control():
+def autonomous():
+    L1.spin(FORWARD, 100)
+    L2.spin(FORWARD, 100)
+    L3.spin(FORWARD, 100)
+    R1.spin(FORWARD, 100)
+    R2.spin(FORWARD, 100)
+    R3.spin(FORWARD, 100)
+    wait(5000)
+    L1.stop()
+    L2.stop()
+    L3.stop()
+    R1.stop()
+    R2.stop()
+    R3.stop()
+
+def user_control():
 
     piston = False
     elevate = True
@@ -29,10 +44,18 @@ def Control():
         R2.spin(FORWARD, rght)
         R3.spin(FORWARD, rght)
 
+ 
+        if controller.buttonR2.pressing() and elevate == True:
+            while controller.buttonR2.pressing():
+                IN.spin(REVERSE, 100)
+                EL.spin(REVERSE, 100)
+                elevate = False
 
-        if controller.buttonR2.pressing():
-            IN.spin(REVERSE, 100)
-            EL.spin(REVERSE, 100)
+        if controller.buttonR2.pressing() and elevate == False:
+            while controller.buttonR2.pressing():
+                IN.stop()
+                EL.stop()
+                elevate = True
         
         if controller.buttonR1.pressing() and elevate == False:
             while controller.buttonR1.pressing():
@@ -60,5 +83,6 @@ def Control():
 
 
 
-Control()
+user_control()
 
+comp = Competition(user_control, autonomous)
