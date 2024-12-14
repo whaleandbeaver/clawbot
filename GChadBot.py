@@ -34,8 +34,8 @@ def user_control():
     elevate = True
     while True:
 
-        lft = controller.axis2.position()
-        rght = controller.axis3.position()
+        lft = controller.axis3.position()
+        rght = controller.axis2.position()
 
         L1.spin(FORWARD, lft)
         L2.spin(FORWARD, lft)
