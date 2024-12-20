@@ -17,12 +17,17 @@ SP1 = DigitalOut(brain.three_wire_port.a)
 SP2 = DigitalOut(brain.three_wire_port.b)
 
 def auto():
-    drv.drive_for(REVERSE, 530, MM)
+    SP1.set(False)
+    SP2.set(True)
+    drv.drive_for(REVERSE, 250, MM)
     wait(500)
     SP1.set(True)
     SP2.set(False)
     wait(500)
-    drv.turn_for(RIGHT, 45, DEGREES)
+    IN.spin(FORWARD, 100)
+    EL.spin(FORWARD, 100)
+#    drv.turn_for(RIGHT, 6, DEGREES)
+    
 
 def control():
 
@@ -74,6 +79,7 @@ def control():
 while True:
     if controller.buttonA.pressing():
         auto()
+        control()
         break
 
     if controller.buttonB.pressing():
