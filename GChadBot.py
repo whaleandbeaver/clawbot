@@ -8,43 +8,46 @@ R3 = Motor(Ports.PORT3, True)
 L1 = Motor(Ports.PORT4, True)
 L2 = Motor(Ports.PORT5)
 L3 = Motor(Ports.PORT6)
+mgr = MotorGroup(R1, R2, R3)
+mgl = MotorGroup(L1, L2, L3)
+drv = DriveTrain(mgl, mgr, 220, 400, 320)
 IN = Motor(Ports.PORT7, True)
 EL = Motor(Ports.PORT8,)
 SP1 = DigitalOut(brain.three_wire_port.a)
 SP2 = DigitalOut(brain.three_wire_port.b)
+CL1 = DigitalOut(brain.three_wire_port.c)
+CL2 = DigitalOut(brain.three_wire_port.d)
 
-def autonomous():
-    L1.spin(FORWARD, 100)
-    L2.spin(FORWARD, 100)
-    L3.spin(FORWARD, 100)
-    R1.spin(FORWARD, 100)
-    R2.spin(FORWARD, 100)
-    R3.spin(FORWARD, 100)
-    wait(5000)
-    L1.stop()
-    L2.stop()
-    L3.stop()
-    R1.stop()
-    R2.stop()
-    R3.stop()
+def auto():
+    drv.set_drive_velocity(50)
+    SP1.set(False)
+    SP2.set(True)
+    drv.drive_for(REVERSE, 260, MM)
+    SP1.set(True)
+    SP2.set(False)
+    IN.spin(FORWARD, 100)
+    EL.spin(FORWARD, 100)
+    wait(2000, MSEC)
+    mgl.spin_for(FORWARD, 360, DEGREES, 25, PERCENT)
+    drv.drive_for(FORWARD, 130, MM)
+    wait(3000, MSEC)
+    drv.drive_for(REVERSE, 130, MM)
+    mgl.spin_for(REVERSE, 320, DEGREES, 25, PERCENT)
+    drv.drive_for(REVERSE, 250, MM)
+    
 
-def user_control():
+def control():
 
     piston = False
+    pistonc = False
     elevate = True
     while True:
 
         lft = controller.axis3.position()
         rght = controller.axis2.position()
+        mgl.spin(FORWARD, lft)
+        mgr.spin(FORWARD, rght)
 
-        L1.spin(FORWARD, lft)
-        L2.spin(FORWARD, lft)
-        L3.spin(FORWARD, lft)
-        R1.spin(FORWARD, rght)
-        R2.spin(FORWARD, rght)
-        R3.spin(FORWARD, rght)
-
- 
         if controller.buttonR2.pressing() and elevate == True:
             while controller.buttonR2.pressing():
                 IN.spin(REVERSE, 100)
@@ -81,8 +84,16 @@ def user_control():
                 SP2.set(True)
                 piston = False
 
+        if controller.buttonUp.pressing() and pistonc == False:
+            while controller.buttonUp.pressing():
+                CL1.set(True)
+                CL1.set(True)
+                pistonc = True
 
+        if controller.buttonUp.pressing() and pistonc == True:
+            while controller.buttonUp.pressing():
+                CL1.set(False)
+                CL1.set(False)
+                pistonc = False
 
-user_control()
-
-comp = Competition(user_control, autonomous)
+comp = Competition(control, auto)

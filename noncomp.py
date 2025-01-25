@@ -16,8 +16,10 @@ EL = Motor(Ports.PORT8,)
 SP1 = DigitalOut(brain.three_wire_port.a)
 SP2 = DigitalOut(brain.three_wire_port.b)
 CL1 = DigitalOut(brain.three_wire_port.c)
+CL2 = DigitalOut(brain.three_wire_port.d)
 
 def auto():
+    drv.set_drive_velocity(50)
     SP1.set(False)
     SP2.set(True)
     drv.drive_for(REVERSE, 260, MM)
@@ -25,7 +27,13 @@ def auto():
     SP2.set(False)
     IN.spin(FORWARD, 100)
     EL.spin(FORWARD, 100)
-#    drv.turn_for(RIGHT, 6, DEGREES)
+    wait(2000, MSEC)
+    mgl.spin_for(FORWARD, 360, DEGREES, 25, PERCENT)
+    drv.drive_for(FORWARD, 130, MM)
+    wait(3000, MSEC)
+    drv.drive_for(REVERSE, 130, MM)
+    mgl.spin_for(REVERSE, 320, DEGREES, 25, PERCENT)
+    drv.drive_for(REVERSE, 250, MM)
     
 
 def control():
@@ -79,10 +87,12 @@ def control():
         if controller.buttonUp.pressing() and pistonc == False:
             while controller.buttonUp.pressing():
                 CL1.set(True)
+                CL1.set(True)
                 pistonc = True
 
         if controller.buttonUp.pressing() and pistonc == True:
             while controller.buttonUp.pressing():
+                CL1.set(False)
                 CL1.set(False)
                 pistonc = False
 
